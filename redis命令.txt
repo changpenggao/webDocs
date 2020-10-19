@@ -1,0 +1,96 @@
+进入 redis/src
+  ./redis-server --port 6380 启动服务器     ./redis-server  ../redis.conf  指定配置文件启动
+
+ ./redis-cli -p 6380 shutdown 启动客户端   -a passwd
+ ./redis-cli -p 6379 -h 127.0.0.1  连接远程IP   ./redis-cli -p 6379 -h 127.0.0.1 shutdown
+
+系统级命令
+info   
+keys *  显示当前database下的key
+flushdb 清楚当前db
+flushall  清除所有的db,keys
+quit 退出当前连接
+dbsize 当前db中元素数量
+select dbid 切换database
+save 手动将数据持久化到磁盘
+
+键命令
+del  key 删除key
+exists key  存在返回1，否则返回0
+move key db 移动key到新库
+ttl  key    time to live 返回剩余生存时间，单位秒 永久返回-1 ，key不存在 返回-2
+expire a 10 设置过期时间（单位：秒）
+type key  数据类型
+randomkey
+rename  oldkey  newkey 
+nx 结尾的命令可以指定规则  renamenx 不会覆盖已存在的newkey
+
+String 命令
+setex/setnx            setex k1 100 v1  设置过期时间 单位秒  / setnx k1 newavalue  (set if not exists)
+getrange/setrange  :  getrange k1 0  2  (闭合区间)/   setrange k1 offset xxx
+mset/msetnx/mget  :  mset k1 v1 k2 v2  k3 v3 批量设置 / mget k1 k2 k3
+incr/decr /incrby / decrby  :      incr k1  /    decrby k1 100  指定增加100
+getset k1 new_v1  返回旧值，同时设置新值
+
+psetex k1 10000 v1  设置过期时间 单位毫秒
+strlen k1
+append k1 appendstr 
+
+List数据结构命令  类似栈数据结构
+lpush/rpush/lrange  : lpush list 1 2 3 4 5 6 7 8   (后进先出)  / lrange list 0 2
+lpop/rpop list  移除栈顶元素
+lindex list 5 索引为5的地方的值
+llen  list
+lrem key count value  移除count个重复的指定value
+ltrim key start end  截取指定范围值后赋值给key
+rpoplpush source  destination 
+lset key index v1 指定索引设置值
+linsert key before/after v1 v2
+
+
+Hash结构命令  value 是键值对
+hset/hget/hmset/hmget/hgetall/hdel   hset map name jim / hget key field value
+hkeys/hvals map
+hexists map name  存在返回1，不存在返回0
+hlen map 键值对数
+hincrby/hincrbyfloat 
+hsetnx (set if  not exists)
+
+
+Set数据结构
+sadd/smembers/sismember :  sadd key a b c d / sismember key a
+scard key     返回集合元素个数
+srem k1 [member ...]    移除k1中的元素
+srandmember k1 [count]   随机返回k1 中的count个元素
+spop k1 [count]      随机出栈，并返回此元素
+sdiff/sinter/sunion : sdiff k1 k2  差集 set1去掉与set2的交集
+
+
+ Zset (sortedSet) 数据结构 通过分数保证顺序
+
+zadd/zrange  [withscores]  :   zadd  sortedset1 100 a 200 b 300 c
+zrangebyscore key min max  [withscores] [limit offset count]  :  "(" 表示 开区间
+	zrangebyscore  k1 60  (90 withscores limit 0 2 
+zrem key member [member ...]
+zcard/zcount  :  zcard k1/ zcount  k1 min max；
+zscore key member     返回member元素对应的分数；
+zrank key member      返回member对应的索引
+zincrby  key  increment  member :  zincrby sortedset 1000 a  给 a 加 1000分
+
+zrevrank/zrevrange/zrevrangebyscore  逆序操作
+
+
+------------------------------------------------------------------------------------
+分布式锁
+操作具有原子性
+setnx（set if not exists)
+
+getset
+
+expire
+
+del
+
+
+
+ 
